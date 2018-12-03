@@ -15,4 +15,12 @@ let read_line = fun ligne ->
 
 let extract = fun file ->
   let canal_entree = ouverture file in
-  let rec extract_rec = fun canal -> (* Essayer de boucler rec jusqu'à la fin du fichier, penser a virer les lignes du debut *)
+  (*let rec extract_rec = fun canal -> (* Essayer de boucler rec jusqu'à la fin du fichier, penser a virer les lignes du debut *)*)
+  let line = ref [] in
+  try
+    while true; do
+      lines := read_line (input_line canal_entree) :: !lines
+    done; !lines
+  with End_of_file ->
+    close_in canal_entree;
+    List.rev !lines ;;
