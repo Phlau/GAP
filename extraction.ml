@@ -1,5 +1,5 @@
 (* AJOUTER LE str.cma DANS LA COMPIL *)
-
+(* Et surement class.ml *)
 let ouverture = fun file ->
   try
     open_in file
