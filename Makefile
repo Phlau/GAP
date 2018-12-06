@@ -1,15 +1,18 @@
 #Y aura des rename a faire
 
-projet.x : extraction.cmo classes.cmo
+all: projet.x clean
+
+projet.x : classes.cmo extraction.cmo
 	ocamlc -o projet.x Str.cma classes.cmo extraction.cmo
 
-classe.cmo : classes.ml
+classes.cmo : classes.ml
 	ocamlc -c classes.ml
 
 #pe pas besoin de classe.cmo
-extraction.cmo : classes.cmo extraction.ml
-	ocamlc -c classes.cmo extraction.ml
+extraction.cmo : extraction.ml
+	ocamlc -c extraction.ml
 
-#Marche pas
+.PHONY : clean
+
 clean :
- 	\rm -f *.cmo
+	rm -f *.cmo *.cmi

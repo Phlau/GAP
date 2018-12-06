@@ -24,7 +24,6 @@ let read_line = fun ligne -> (* Gerer id_avion qui est au format "#01:" *)
 
 let extract = fun file ->
   let canal_entree = ouverture file in (*TODO Lire les 3 lignes inutiles du debut*)
-  (*let rec extract_rec = fun canal -> (* Essayer de boucler rec jusqu'à la fin du fichier, penser a virer les lignes du debut *)*)
   let lines = ref [] in
   let buf = ref (input_line canal_entree) in
   buf := input_line canal_entree;
