@@ -1,7 +1,8 @@
 (* AJOUTER LE str.cma DANS LA COMPIL *)
 (* Et surement classes.ml *)
 
-let nb_gate = ref 0;;
+let NB_GATE = ref 0;;
+let NB_AVION = ref 0;;
 
 let ouverture = fun file ->
   try
@@ -20,6 +21,7 @@ let read_line = fun ligne -> (* Gerer id_avion qui est au format "#01:" *)
     |id :: t_i :: t_f :: gates  -> let gates_list = List.map Classes.init_gate (List.map int_of_string gates) in
             let last_gate = List.nth gates_list ((List.length gates_list)-1) in
             if !nb_gate < last_gate.id_gate then nb_gate := last_gate.id_gate;
+            NB_AVION := !NB_AVION + 1;
             let n = String.length id in
             let id_av = int_of_string (String.sub id 1 (n-2)) in
             let avion = Classes.init_avion id_av (heure_to_min_int t_i) (heure_to_min_int t_f) gates_list in
