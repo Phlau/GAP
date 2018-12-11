@@ -8,7 +8,6 @@ projet.x : classes.cmo extraction.cmo
 classes.cmo : classes.ml
 	ocamlc -c classes.ml
 
-#pe pas besoin de classe.cmo
 extraction.cmo : extraction.ml
 	ocamlc -c extraction.ml
 
