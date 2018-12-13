@@ -7,9 +7,9 @@ type avion = {
   }
 and gate = {
     id_gate : int;
-  avion_attribue : avion list;
+  mutable avion_attribue : avion list;
   mutable delta : int;
-    mutable conflits : int};; (*Nombre de conflits par Gate*)
+  mutable conflits : int};; (*Nombre de conflits par Gate*)
 
 type changement =
     Deplacement of avion*gate

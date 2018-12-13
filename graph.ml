@@ -27,23 +27,30 @@ let y_ratio_from_size = fun nb_gates y_size_tot ->
   y_ratio;;
 
 (* OK : Penser a partir du haut (de base en bas) *)
-let gates_to_start = fun i_gate y_ratio ->
-  let y_start_gate = (Extraction._NB_GATE-1 - i_gate) * y_ratio in
+let gates_to_start = fun i_gate nb_gates y_ratio ->
+  let y_start_gate = (nb_gates-1 - i_gate) * y_ratio in
   y_start_gate;;
 
-let trace_avion = fun x_ratio y_ratio id_gate avion ->
-  let x_size_avion = time_to_size avion.h_arrivee avion.h_depart x_ratio in
-  let x_start_avion = time_to_start avion.h_arrivee x_ratio in
-  let y_start_gate = gates_to_start id_gate y_ratio in
+let trace_avion = fun x_ratio y_ratio id_gate nb_gates avion ->
+  let x_size_avion = time_to_size (avion.Classes.h_arrivee) (avion.h_depart) x_ratio in
+  let x_start_avion = time_to_start (avion.h_arrivee) x_ratio in
+  let y_start_gate = gates_to_start id_gate nb_gates y_ratio in
   Graphics.fill_rect x_start_avion y_start_gate x_size_avion y_ratio;;
 
-let trace = fun solution ->
-  let y_ratio = y_ratio_from_size Extraction._NB_GATE y_size_tot in
+let trace = fun solution avions nb_gates ->
+  let y_ratio = y_ratio_from_size nb_gates y_size_tot in
   let x_ratio = x_ratio_from_size 0 1440 x_size_tot in
-  for i = startval to endval do (* Ou pattern matching ? *)(* Boucle sur les gates ou les !!avions_to_gate!! ?*)
-  done
-  let trace_rec = rec fun ->
-    0
+  let n = Array.length avions in
+  Graphics.open_graph " 1440x700";
+  for i = 0 to n-1 do  (* Ou pattern matching ? *)(* Boucle sur les gates ou les !!avions_to_gate!! ?*)
+    let id_gate = solution.Classes.plane_to_gate.(i) in
+    Graphics.set_color a_color.(i mod 7);
+    trace_avion x_ratio y_ratio id_gate nb_gates avions.(i);
+  done;
+  let w = Graphics.wait_next_event [Graphics.Button_up] in
+  Graphics.close_graph;;
+
+
 
 
 
@@ -56,8 +63,8 @@ let gate2 = Classes.init_gate 2;;
 let gate3 = Classes.init_gate 3;;
 
 let avion0 = Classes.init_avion 0 10 20 [|gate0;gate1;gate2;gate3|];;
-let avion1 = Classes.init_avion 1 10 20 [|gate0;gate1;gate2;gate3|];;
-let avion2 = Classes.init_avion 2 30 40 [|gate0;gate1;gate2;gate3|];;
+let avion1 = Classes.init_avion 1 10 25 [|gate0;gate1;gate2;gate3|];;
+let avion2 = Classes.init_avion 2 30 45 [|gate0;gate1;gate2;gate3|];;
 let avion3 = Classes.init_avion 3 30 40 [|gate0;gate1;gate2;gate3|];;
 
 gate0.Classes.avion_attribue<-List.append gate0.Classes.avion_attribue [avion0;avion2];;
@@ -66,8 +73,10 @@ gate2.Classes.avion_attribue<-List.append gate2.Classes.avion_attribue [];;
 gate3.Classes.avion_attribue<-List.append gate3.Classes.avion_attribue [];;
 
 let avions = [|avion0;avion1;avion2;avion3|];;
-let solution_actuelle={Classes.plane_to_gate=[|0;0;1;1|];
+let solution_actuelle={Classes.plane_to_gate=[|0;1;0;1|];
                        Classes.gates= [|gate0;gate1;gate2;gate3|]};;
+
+trace solution_actuelle avions 4;;
 (* --------------------Fin de la phase de test--------------------*)
 
 
