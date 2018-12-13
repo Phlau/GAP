@@ -1,4 +1,5 @@
 #Y aura des rename a faire
+#Penser à ajouter le reste
 
 all: projet.x clean
 

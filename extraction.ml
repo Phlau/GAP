@@ -1,5 +1,5 @@
 (* AJOUTER LE str.cma DANS LA COMPIL *)
-(* Et surement classes.ml *)
+(* Et classes.ml *)
 
 let _NB_GATE = ref 0;;
 let _NB_AVION = ref 0;;
