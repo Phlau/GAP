@@ -12,7 +12,8 @@ let ouverture = fun file ->
     raise exc;;
 
 let heure_to_min_int = fun t ->
-  let t_split = String.split_on_char ':' t in
+  let r=Str.regexp ":" in
+  let t_split = Str.split r t in
   let t_fin = int_of_string (List.hd t_split)*60 + int_of_string (List.nth t_split 1) in
   t_fin;;
 
@@ -21,7 +22,7 @@ let read_line = fun ligne ->
     |id :: t_i :: t_f :: gates  -> let gates_list = List.map Classes.init_gate (List.map int_of_string gates) in
             let gates_array = Array.of_list gates_list in
             let last_gate = gates_array.((Array.length gates_array)-1) in
-            if !_NB_GATE < last_gate.id_gate then _NB_GATE := last_gate.id_gate;
+            if !_NB_GATE < last_gate.Classes.id_gate then _NB_GATE := last_gate.Classes.id_gate+1;
             _NB_AVION := !_NB_AVION + 1;
             let n = String.length id in
             let id_av = int_of_string (String.sub id 1 (n-2)) in

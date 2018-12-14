@@ -1,61 +1,66 @@
-let copy = fun liste_avion ->
-  let copie = ref [] in
-  for i = 0 to (List.length liste_avion ) -1 do
-    let avion_init= List.nth liste_avion i in
-    copie := List.append !copie [{Classes.id_avion = avion_init.Classes.id_avion;
-                                  h_arrivee= avion_init.Classes.h_arrivee;
-                                  h_depart = avion_init.Classes.h_depart;
-                                  gate_candidate = avion_init.Classes.gate_candidate;
-                                  gate_attribuee = avion_init.Classes.gate_attribuee }];
-  done;
-  copie;;
 
-
-let neighbours = fun liste_avions ->
-  let voisinage= ref [] in
-  let voisinage_changements= ref [] in
-  let length=List.length liste_avions in
-  for i=0 to (length-1) do
-    for j=(i+1) to (length-1) do
-      let candidat = copy liste_avions in
-      let avioni= List.nth !candidat i in
-      let avionj= List.nth !candidat j in
-      Classes.switch_gate_2 avioni avionj;
-      voisinage := List.append !voisinage [!candidat];
-      voisinage_changements := List.append !voisinage_changements [(i,j)];
+(*Pour renvoyer tous les voisins ayant juste la gate d'un avion qui change*)
+let deplacement_gate = fun solution_actuelle avion_array->
+  let voisin=ref [] in
+  let length_avion=Array.length avion_array  in
+  for id_avion=0 to (length_avion-1) do
+    let id_gate_actuel=solution_actuelle.Classes.plane_to_gate.(id_avion) in
+    let gate_possible=avion_array.(id_avion).Classes.gate_candidate in
+    let length_gate=Array.length gate_possible in
+    for i=0 to (length_gate-1) do
+      let id_gate_possible=gate_possible.(i).Classes.id_gate in
+      if id_gate_actuel!=id_gate_possible then
+        let fresh = Copie.copy_solution solution_actuelle in
+        let planes_next=fresh.Classes.plane_to_gate in
+        let gates_next=fresh.Classes.gates in
+        planes_next.(id_avion)<-id_gate_possible;
+        gates_next.(id_gate_possible).Classes.avion_attribue <- List.append gates_next.(id_gate_possible).Classes.avion_attribue [avion_array.(id_avion)];
+        gates_next.(id_gate_actuel).Classes.avion_attribue<- List.filter (fun x -> x!=avion_array.(id_avion) ) gates_next.(id_gate_actuel).Classes.avion_attribue;
+        voisin := List.append !voisin [(fresh,[|id_gate_possible;id_gate_actuel;id_avion|])];
     done;
-  done;   
-  (voisinage,voisinage_changements);;
-
-
-
-(* TEST *)
-
-(*
-let gate1 = {Classes.id_gate=1;delta=0;conflits=0};;
-let gate2 = {Classes.id_gate=2;delta=0;conflits=0};;
-let gate3 = {Classes.id_gate=3;delta=0;conflits=0};;
-let gate4 = {Classes.id_gate=4;delta=0;conflits=0};;
-
-let avion1 = {Classes.id_avion = 1; h_arrivee=10; h_depart = 20; gate_candidate = [gate1];gate_attribuee = gate1 };;
-let avion2 = {Classes.id_avion = 2; h_arrivee=10; h_depart = 20; gate_candidate = [gate1];gate_attribuee = gate2 };;
-let avion3 = { Classes.id_avion = 3; h_arrivee=10; h_depart = 20; gate_candidate = [gate1];gate_attribuee = gate3 };;
-let avion4 = { Classes.id_avion = 4; h_arrivee=10; h_depart = 20; gate_candidate = [gate1];gate_attribuee = gate4 };;
-
-
-let avions = [avion1;avion2;avion3;avion4];;
-let test= voisins avions;;
-
-let (testa,testb)= test;;
-
-
-for i=0 to (List.length !testa -1) do
-  let (chang1,chang2) = List.nth !testb i in 
-  Printf.printf "candidat %d changement %d %d\n" (i+1) (chang1+1) (chang2+1) ;
-  for j=0 to (List.length avions -1) do
-    let a = ref (List.nth (List.nth !testa i) j) in
-    Printf.printf "avion %d  :" !a.Classes.id_avion;
-    Printf.printf "%d\n" !a.Classes.gate_attribuee.Classes.id_gate;
   done;
-done;
-*)
+  Array.of_list !voisin;;
+
+let ordonner_avion_liste = fun avion_liste ->
+  let avion_liste_triee = List.sort (fun avion1 avion2 -> if avion1.Classes.h_arrivee>avion2.Classes.h_arrivee then 1 else -1) avion_liste in
+  avion_liste_triee;;
+
+let maj_delta_gate=fun gate ->
+  gate.Classes.avion_attribue<-ordonner_avion_liste gate.Classes.avion_attribue; (*si ya un probleme  c'est ptet la*)
+  let (conflits,delta)= Delta.f_delta gate.Classes.avion_attribue in
+  gate.Classes.delta <-delta;
+  gate.Classes.conflits <-conflits;;
+
+    
+
+let maj_delta_voisinage = fun voisinage -> (*voisinage est un tableau de tuple (solution, changement)*)
+  let length= Array.length voisinage in
+  for i=0 to (length-1) do
+    let (solution,changement) = voisinage.(i) in
+    for j=0 to 1 do (*changement est un tableau d'id_portes modifiées*)
+      let id_gate_modifiee=changement.(j) in
+      maj_delta_gate solution.Classes.gates.(id_gate_modifiee);
+    done;
+  done;
+  voisinage;;
+
+
+
+let best_candidate = fun voisinage ->
+  let id_best_candidate = ref 0 in
+  let val_best_candidate = ref (Delta.fonction_objectif (fst (voisinage.(0)))) in
+  let length=Array.length voisinage in
+  for id_candidate=1 to (length-1) do
+    let val_candidate = ref (Delta.fonction_objectif (fst (voisinage.(id_candidate)))) in
+    if val_best_candidate > val_candidate
+    then
+      begin
+        id_best_candidate:=id_candidate;
+        val_best_candidate :=!val_candidate;
+      end
+  done;
+  (voisinage.(!id_best_candidate),!val_best_candidate);;
+
+
+
+
