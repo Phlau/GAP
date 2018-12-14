@@ -2,7 +2,7 @@
 (* graphics.cma et classes.ml pour la compilation *)
 let a_color = [|Graphics.red; Graphics.green; Graphics.blue;
                 Graphics.yellow; Graphics.cyan; Graphics.magenta |];;
-let x_size_tot = 1200.;;
+let x_size_tot = 1440.;;
 let y_size_tot = 700.;;
 
 (* Heure en taille pour integrer direct,
@@ -35,14 +35,42 @@ let trace_avion = fun x_ratio y_ratio id_gate nb_gates avion ->
   let x_size_avion = time_to_size (float_of_int avion.Classes.h_arrivee) (float_of_int avion.Classes.h_depart) x_ratio in
   let x_start_avion = time_to_start (float_of_int avion.Classes.h_arrivee) x_ratio in
   let y_start_gate = gates_to_start id_gate nb_gates y_ratio in
-  Graphics.fill_rect (int_of_float x_start_avion) y_start_gate (int_of_float x_size_avion) (y_ratio-2);; (* Creation d'une marge verticale *)
+  Graphics.fill_rect (int_of_float x_start_avion) y_start_gate (int_of_float x_size_avion) (y_ratio-2); (* Creation d'une marge verticale *)
+  let x_id = (int_of_float x_start_avion * 2 + int_of_float x_size_avion)/2 in
+  let y_id = (y_start_gate + gates_to_start (id_gate-1) nb_gates y_ratio)/2 in
+  Graphics.moveto x_id y_id;
+  Graphics.set_color Graphics.black;
+  Graphics.set_text_size 12;
+  Graphics.draw_string (string_of_int avion.id_avion);;
+
+
+let trace_axe_gate = fun y_ratio id_gate nb_gates ->
+  Graphics.moveto 5 (((gates_to_start id_gate nb_gates y_ratio)+(gates_to_start (id_gate-1) nb_gates y_ratio))/2);
+  Graphics.set_text_size 12;
+  Graphics.draw_string (string_of_int id_gate);;
+
+let trace_axe_temps = fun x_ratio y_ratio nb_gates ->
+  let y = gates_to_start (-1) nb_gates y_ratio in
+  let dx = int_of_float (time_to_start (float_of_int 60) x_ratio) in
+  for h = 0 to 23 do
+    Graphics.moveto (h*dx) y;
+    Graphics.set_text_size 12;
+    Graphics.draw_string (string_of_int h);
+  done
+
+
 
 let trace = fun solution avions nb_gates ->
   let y_ratio = y_ratio_from_size nb_gates y_size_tot in
   let x_ratio = x_ratio_from_size 0. 1440. x_size_tot in
   let n = Array.length avions in
   Graphics.open_graph " 1440x700";
-  for i = 0 to n-1 do  (* Ou pattern matching ? *)(* Boucle sur les gates ou les !!avions_to_gate!! ?*)
+  Graphics.set_color Graphics.black;
+  trace_axe_temps x_ratio (int_of_float y_ratio) (int_of_float nb_gates);
+  for j = 0 to (int_of_float nb_gates - 1) do
+    trace_axe_gate (int_of_float y_ratio) j (int_of_float nb_gates);
+  done;
+  for i = 0 to n-1 do  (* On boucle sur les plane_to_gate *)
     let id_gate = solution.Classes.plane_to_gate.(i) in
     Graphics.set_color a_color.(i mod 6); (* Garder la couleur noire pour l'ecriture *)
     trace_avion x_ratio (int_of_float y_ratio) id_gate (int_of_float nb_gates) avions.(i);
