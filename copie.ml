@@ -9,26 +9,18 @@ let copy_gate=fun gate ->
 
 (*Pour copier un array de gate*)
 let copy_gates= fun gates->
-  let copy= ref [] in
+  Array.map copy_gate gates
+(*let copy= ref [] in
   let length=Array.length gates in
   for i=0 to (length-1) do
-    copy:= List.append !copy [copy_gate gates.(i)];
+    copy:= (copy_gate gates.(i)) :: !copy ;
   done;
-  Array.of_list !copy;;
+  Array.of_list (List.rev !copy);;*)
 
-
-(*Pour copier un array d'entier*)
-let copy_planes = fun planes->
-  let copy= ref [] in
-  let length=Array.length planes in
-  for i=0 to (length-1) do
-    copy:= List.append !copy [planes.(i)];
-  done;
-  Array.of_list !copy;;
 
 
 (*Pour deep copy une solution*)
 let copy_solution= fun solution ->
-  let a = {Classes.plane_to_gate= copy_planes solution.Classes.plane_to_gate;
-           Classes.gates=copy_gates solution.Classes.gates} in
+  let a = {Classes.plane_to_gate= Array.copy solution.Classes.plane_to_gate;
+           Classes.gates=  copy_gates solution.Classes.gates} in
   a;;

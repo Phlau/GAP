@@ -1,7 +1,6 @@
 (* Penser a la marge entre 2 traits *)
 (* graphics.cma et classes.ml pour la compilation *)
-let a_color = [|Graphics.red; Graphics.green; Graphics.blue;
-                Graphics.yellow; Graphics.cyan; Graphics.magenta |];;
+let a_color = [|Graphics.green; Graphics.blue; Graphics.yellow; Graphics.cyan; Graphics.magenta |];;
 let x_size_tot = 1440.;;
 let y_size_tot = 700.;;
 
@@ -31,14 +30,16 @@ let gates_to_start = fun i_gate nb_gates y_ratio ->
   let y_start_gate = (nb_gates-1 - i_gate) * y_ratio in
   y_start_gate;;
 
+(* Gestion des conflits : if cursor =! blanc -> rect rouge !!!! *)
 let trace_avion = fun x_ratio y_ratio id_gate nb_gates avion ->
   let x_size_avion = time_to_size (float_of_int avion.Classes.h_arrivee) (float_of_int avion.Classes.h_depart) x_ratio in
-  let x_start_avion = time_to_start (float_of_int avion.Classes.h_arrivee) x_ratio in
-  let y_start_gate = gates_to_start id_gate nb_gates y_ratio in
-  Graphics.fill_rect (int_of_float x_start_avion) y_start_gate (int_of_float x_size_avion) (y_ratio-2); (* Creation d'une marge verticale *)
-  let x_id = (int_of_float x_start_avion * 2 + int_of_float x_size_avion)/2 in
-  let y_id = (y_start_gate + gates_to_start (id_gate-1) nb_gates y_ratio)/2 in
-  Graphics.moveto x_id y_id;
+  let x_start_avion = int_of_float (time_to_start (float_of_int avion.Classes.h_arrivee) x_ratio) in
+  let y_start_avion = gates_to_start id_gate nb_gates y_ratio in
+  if Graphics.point_color x_start_avion y_start_avion != Graphics.white then Graphics.set_color Graphics.red;
+  Graphics.fill_rect x_start_avion y_start_avion (int_of_float x_size_avion) (y_ratio-2); (* Creation d'une marge verticale *)
+  let x_id = (x_start_avion * 2 + int_of_float x_size_avion)/2 in
+  let y_id = (y_start_avion + gates_to_start (id_gate-1) nb_gates y_ratio)/2 in
+  Graphics.moveto (x_id-3) (y_id-5);
   Graphics.set_color Graphics.black;
   Graphics.set_text_size 12;
   Graphics.draw_string (string_of_int avion.id_avion);;
@@ -72,12 +73,11 @@ let trace = fun solution avions nb_gates ->
   done;
   for i = 0 to n-1 do  (* On boucle sur les plane_to_gate *)
     let id_gate = solution.Classes.plane_to_gate.(i) in
-    Graphics.set_color a_color.(i mod 6); (* Garder la couleur noire pour l'ecriture *)
+    Graphics.set_color a_color.(i mod 5); (* Garder la couleur noire pour l'ecriture *)
     trace_avion x_ratio (int_of_float y_ratio) id_gate (int_of_float nb_gates) avions.(i);
   done;
   let w = Graphics.wait_next_event [Graphics.Button_up] in
   Graphics.close_graph;;
-
 
 
 

@@ -9,7 +9,7 @@ and gate = {
     id_gate : int;
   mutable avion_attribue : avion list;
   mutable delta : int;
-    mutable conflits : int};; (*Nombre de conflits par Gate*)
+  mutable conflits : int};; (*Nombre de conflits par Gate*)
 
 type changement =
     Deplacement of gate*gate
@@ -58,7 +58,7 @@ Printf.printf "%d\n" (List.nth (ordonner_avion_liste liste_av) 1).id_avion;;
 Printf.printf "%d\n" (List.nth (ordonner_avion_liste liste_av) 2).id_avion;;
 Printf.printf "%d\n" (List.nth (ordonner_avion_liste liste_av) 3).id_avion;;*)
 
-        
+
 
 (*let avion1 = { id_avion = 1; h_arrivee=10; h_depart = 20; gate_candidate = [|gate1|]};;
 let avion2 = { id_avion = 2; h_arrivee=10; h_depart = 20; gate_candidate = [|gate1|]};;
@@ -67,15 +67,15 @@ avion1.id_avion<-2;;
 let gate1 = {id_gate=1;avion_attribue=avion1;delta=0;conflits=0};;
 let gate2 = {id_gate=2;avion_attribue=avion2;delta=0;conflits=0};;
 
-         
-  
+
+
 let changement_gate = fun change ->
   match change with
     Deplacement (avion1,gate1) -> deplacement_gate avion1 gate1
   |Switch_2 (avion1,avion2) -> switch_gate_2 avion1 avion2
   |Switch_3 (avion1,avion2,avion3) -> switch_gate_3 avion1 avion2 avion3;;*)
 
-(*let ordonner_sol = fun sol ->    
+(*let ordonner_sol = fun sol ->
   let plane_by_gate = Array.make nb_gate [] in (*10 deviendra nb_gate de florian*)
   for i=0 to List.length sol do
     let avion_i = List.nth sol i in

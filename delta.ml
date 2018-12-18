@@ -25,7 +25,7 @@ let fonction_objectif = fun obj_solution -> (*solution est un objet de type solu
     somme_delta := !somme_delta + obj_solution.Classes.gates.(i).Classes.delta;
     conflits := !conflits + obj_solution.Classes.gates.(i).Classes.conflits;
     done;
-  !somme_delta + 1000000* !conflits;;
+  !somme_delta + 10000* !conflits;;
 
 
 
