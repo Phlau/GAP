@@ -1,5 +1,6 @@
 #Y aura des rename a faire
 #Penser à ajouter le reste
+#Et le MLI !!!!
 
 # ocamlc  -o projet str.cma classes.ml copie.ml delta.ml extraction.ml neighbours.ml
 	# affichage.ml tabu.ml graphics.cma graph.ml main.ml
@@ -26,13 +27,16 @@ $(TARGET): $(NORM_OBJS)
 $(TARGETOPT) : $(OPT_OBJS)
 	$(COMPILEOPT) -o $@ $(LIBS:.cma=.cmxa) $(OPT_OBJS)
 
-.SUFFIXES: .ml .cmo .cmx
+.SUFFIXES: .ml .cmo .cmx .mli .cmi
 
 .ml.cmo :
 	$(COMPILE) -c $<
 
 .ml.cmx :
 	$(COMPILEOPT) -c $<
+
+.mli.cmi :
+	$(COMPILE) -c $<
 
 
 .PHONY : clean
@@ -41,7 +45,7 @@ clean :
 	rm -f *.cmo *.cmi *.cmx *.o
 
 .depend:
-	$(CSLDEP) *.ml >.depend
+	$(CSLDEP) *.mli *.ml >.depend
 
 include .depend
 

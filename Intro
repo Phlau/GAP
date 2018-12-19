@@ -1,0 +1,55 @@
+
+
+{C Durant Florian, Gourvennec Marie, Peirera Thibaud, Ropp Thierry}
+{C Ecole Nationale de l'Aviation Civile}
+
+{2 Presentation}
+
+This program try to solve the Gate Allocation Problem using a tabu algorithm.
+
+{2 Installation}
+
+Compile using command :
+{v
+> make
+v}
+
+This command creates an executable file [projet.x]
+
+Compile using command :
+{v
+> make opt
+v}
+
+This command creates an executable file [projetopt.x] using ocamlopt
+
+{2 Usage }
+
+Run the program :
+{v
+> ./projet.x
+v}
+
+Run the optimized program :
+{v
+> ./projetopt.x
+v}
+
+
+{2 Reference manual }
+
+List of modules:
+
+{!modules: Affichage Classes Copie Delta Extraction Graph Neighbours Tabu}
+
+
+You may also refer to the following indexes:
+
+{!indexlist}
+
+This documentation was produced with [ocamldoc]:
+{v
+ocamldoc -html -t "PathFinder" -intro Intro -d [doc_directory] -hide Pervasives *.mli
+v}
+
+{2 Copyright and license}
