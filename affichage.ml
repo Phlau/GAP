@@ -18,12 +18,14 @@ let afficher_gates = fun gates ->
     Printf.printf "\nConflits= %d Delta =%d\n\n" gates.(i).Classes.conflits gates.(i).Classes.delta
   done;
 ;;
-let afficher_element_voisinage = fun solution ->
-  let (sol,chang) = solution in
+let afficher_element_voisinage = fun solution_chang ->
+  let (sol,chang) = solution_chang in
   let plane=sol.Classes.plane_to_gate in
   let gates=sol.Classes.gates in
-  Printf.printf "Gates impactées : %d %d\n" chang.(0) chang.(1);
-  Printf.printf "Avion concerné  : %d \n\n" chang.(2);
+  for i=0 to Array.length chang -1 do
+    Printf.printf "Gates impactées : %d %d\n" chang.(i).(0) chang.(i).(1);
+    Printf.printf "Avion concerné  : %d \n\n" chang.(i).(2);
+  done;
   afficher_plane plane;
   afficher_gates gates;;
 

@@ -49,7 +49,7 @@ You may also refer to the following indexes:
 
 This documentation was produced with [ocamldoc]:
 {v
-ocamldoc -html -t "PathFinder" -intro Intro -d [doc_directory] -hide Pervasives *.mli
+ocamldoc -html -t "GAP" -intro Intro -d [doc_directory] -hide Pervasives *.mli
 v}
 
 {2 Copyright and license}

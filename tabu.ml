@@ -35,71 +35,72 @@ let init_solution = fun planes_tab gates_tab ->
 
 
 let update_tabu = fun suivant t t_size ->
-  let (solution, changement) = suivant in
-   t := List.append !t [changement];
+  let changement = (snd  suivant) in
+  t := List.append !t [changement];
   while (List.length !t) > t_size do
     t := List.tl !t ;
   done;
   !t;;
-(*
-l = ref [];
-i = ref 0 ;
-matchi with
-|t_size -> l
-|n -> incr i ;
-*)
+
 
 let eliminer_tabu = fun scourant_voisinage t ->
   let bons_voisins_list = ref [] in
   for i=0 to (Array.length scourant_voisinage)-1 do
     let (solution, changement) = scourant_voisinage.(i) in
-    let changement_inverse =[|changement.(1);changement.(0);changement.(2)|] in
-    if not (List.mem changement_inverse !t) then
+    if not (List.mem (changement:int array array) !t) then
       bons_voisins_list :=  (solution,changement) ::  !bons_voisins_list;
   done;
   let scourant_candidate_voisins = Array.of_list !bons_voisins_list in
   scourant_candidate_voisins;;
+(*Array.of_list (List.filter (fun x -> not (List.mem (snd x) !t))  (Array.to_list scourant_voisinage) );;*)
 
 
 
-let main_tabu = fun t_size p_tab g_tab  ->   (* argument = taille de la liste tabu*)
-
+let main_tabu = fun t_size p_tab g_tab max_bad_iter max_iter fact_delta fact_conflit->   (* argument = taille de la liste tabu*)
+  let nbr_amelioration= ref 0 in
   let s_courant  = ref (init_solution p_tab g_tab) in
-  let f_courant = ref (Delta.fonction_objectif !s_courant) in
+  let f_courant = ref (Delta.fonction_objectif !s_courant fact_delta fact_conflit) in
   let s_best = ref (Copie.copy_solution !s_courant) in
   let f_best = ref !f_courant in
   let t = ref [] in
-  let nbr_bad_iter = ref 0 in
+  let nbr_bad_iter = ref 0 in        
   let iter=ref 0 in
-  while !nbr_bad_iter <= 1000 && !iter < 100 do     (* critï¿½re d'arrï¿½t ï¿½ rï¿½gler = nbr d'itï¿½ratins qui font augmenter la fonction objectif *)
+  while !nbr_bad_iter <= max_bad_iter && !iter < max_iter do     (* critère d'arrêt à régler = nbr d'itératins qui font augmenter la fonction objectif *)
+    
+
     iter:=!iter+1;
-    let t1=Unix.gettimeofday() in
-    let scourant_voisinage = ref (Neighbours.deplacement_gate !s_courant p_tab) in   (* renvoie un voisinga (array de tuples (solution, array(id_gate debut,id_gate fin, avion))*)
-    let t2=Unix.gettimeofday() in
+    let scourant_voisinage = ref (Neighbours.voisinage  !s_courant p_tab !iter) in
+
+    (* voisinage = liste de (solution, changement) où changement  = array d'array de int, soit un switch soit un déplacement*)
     let scourant_voisinage_maj= ref (Neighbours.maj_delta_voisinage !scourant_voisinage) in
-    let t3=Unix.gettimeofday() in
     let scourant_candidate_voisins = ref (eliminer_tabu !scourant_voisinage_maj t) in
-    let t4=Unix.gettimeofday() in
-    let best_candidate=ref (Neighbours.best_candidate !scourant_candidate_voisins) in
-    let t5=Unix.gettimeofday() in
-    let s_suivant=ref (fst !best_candidate) in
-    let f_suivant =ref (snd !best_candidate) in  (*Surement probleme faut mettre ref*)
+    let best_candidate=ref (Neighbours.best_candidate !scourant_candidate_voisins fact_delta fact_conflit) in (*best_caniddate = ((solution, changement),val_fonction_obj)*)
+    let s_suivant=ref (fst !best_candidate) in (*s_suivant = (solution, changement)*)
+    let f_suivant =ref (snd !best_candidate) in  
     t := update_tabu !s_suivant t t_size;
-    let t6=Unix.gettimeofday() in
-    if !f_suivant > !f_courant then incr nbr_bad_iter
-    else
-    begin
-      if !f_suivant < !f_best then
-        begin
-          s_best := fst !s_suivant ;
-          f_best := !f_suivant ;
-          nbr_bad_iter := 0 ;
-        end;
-    end;
+    incr nbr_bad_iter;
+
+    if (!f_suivant:int ) < !f_best then
+      begin
+        s_best := fst !s_suivant ;
+        f_best := !f_suivant ;
+        nbr_bad_iter := 0 ;
+        incr nbr_amelioration;
+      end;
     s_courant := fst  !s_suivant;
     f_courant := !f_suivant;
-
-  (*  Printf.printf "t2-t1 =%f \nt3-t2 =%f \nt4-t3 =%f \nt5-t4 =%f \nt6-t5 =%f" (t2-.t1) (t3-.t2) (t4-.t3) (t5-.t4) (t6-.t5);*)
+    Printf.printf " NOMBRE ITERATION =%07d NOMBRE AMELIORATION = %07d  BEST Solution =%07d\r" !iter !nbr_amelioration !f_best;
+    flush stdout;
   done;
-  Printf.printf "NOMBRE ITERATION =%d" !iter;
   (!s_best, !f_best);;
+
+
+
+
+
+
+    
+ 
+    
+    
+      

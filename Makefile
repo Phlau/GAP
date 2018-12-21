@@ -8,6 +8,8 @@
 COMPILE = ocamlc
 COMPILEOPT = ocamlopt -unsafe
 CSLDEP = ocamldep
+CAMLDOC = ocamldoc
+
 TARGET = projet.x
 TARGETOPT = projetopt.x
 NORM_FILES = classes.ml copie.ml delta.ml extraction.ml neighbours.ml affichage.ml tabu.ml graph.ml main.ml
@@ -17,7 +19,8 @@ LIBS = graphics.cma str.cma unix.cma
 
 all: .depend $(TARGET)
 
-# bytes: $(TARGET)
+doc:
+	mkdir doc;$(CAMLDOC) -html -t "GAP" -d doc -intro Intro -hide Pervasives *.mli
 
 opt: $(TARGETOPT)
 
@@ -25,7 +28,7 @@ $(TARGET): $(NORM_OBJS)
 	$(COMPILE) -o $@ $(LIBS) $(NORM_OBJS)
 
 $(TARGETOPT) : $(OPT_OBJS)
-	$(COMPILEOPT) -o $@ $(LIBS:.cma=.cmxa) $(OPT_OBJS)
+	$(COMPILEOPT) -p -o $@ $(LIBS:.cma=.cmxa) $(OPT_OBJS)
 
 .SUFFIXES: .ml .mli .cmo .cmi .cmx
 
@@ -39,24 +42,15 @@ $(TARGETOPT) : $(OPT_OBJS)
 	$(COMPILEOPT) -c $<
 
 
-
 .PHONY : clean
 
+cleandoc:
+	\rm -Rf doc
+
 clean :
-	rm -f *.cmo *.cmi *.cmx *.o
+	\rm -f *.cmo *.cmi *.cmx *.o
 
 .depend:
-	$(CSLDEP) *.mli *.ml >.depend
+	$(CSLDEP) *.mli *.ml > .depend
 
 include .depend
-
-# all: projet.x clean
-#
-# projet.x : classes.cmo extraction.cmo
-# 	ocamlc -o projet.x Str.cma classes.cmo extraction.cmo
-#
-# classes.cmo : classes.ml
-# 	ocamlc -c classes.ml
-#
-# extraction.cmo : extraction.ml
-# 	ocamlc -c extraction.ml

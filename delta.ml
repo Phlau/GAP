@@ -18,14 +18,14 @@ let f_delta = fun liste_avion ->
   in
   calc liste_avion !conflit !delta;;
 
-let fonction_objectif = fun obj_solution -> (*solution est un objet de type solution*)
+let fonction_objectif = fun obj_solution fact_delta fact_conflit -> (*solution est un objet de type solution*)
   let somme_delta= ref 0 in
   let conflits=ref 0 in
   for i=0 to (Array.length obj_solution.Classes.gates-1) do 
     somme_delta := !somme_delta + obj_solution.Classes.gates.(i).Classes.delta;
     conflits := !conflits + obj_solution.Classes.gates.(i).Classes.conflits;
     done;
-  !somme_delta + 10000* !conflits;;
+  fact_delta * !somme_delta + fact_conflit * !conflits;;
 
 
 
