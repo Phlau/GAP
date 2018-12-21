@@ -1,3 +1,5 @@
+(** This module is made to group important types that is used in our program *)
+
 type avion = {
   id_avion : int;
   h_arrivee : int;

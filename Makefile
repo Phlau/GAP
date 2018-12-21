@@ -7,17 +7,17 @@
 
 COMPILE = ocamlc
 COMPILEOPT = ocamlopt -unsafe
-CSLDEP=ocamldep
+CSLDEP = ocamldep
 TARGET = projet.x
 TARGETOPT = projetopt.x
-NORM_FILES= classes.ml copie.ml delta.ml extraction.ml neighbours.ml affichage.ml tabu.ml graph.ml main.ml
-NORM_OBJS =  $(NORM_FILES:.ml=.cmo)
-OPT_OBJS=  $(NORM_FILES:.ml=.cmx)
-LIBS= graphics.cma str.cma unix.cma
+NORM_FILES = classes.ml copie.ml delta.ml extraction.ml neighbours.ml affichage.ml tabu.ml graph.ml main.ml
+NORM_OBJS = $(NORM_FILES:.ml=.cmo)
+OPT_OBJS = $(NORM_FILES:.ml=.cmx)
+LIBS = graphics.cma str.cma unix.cma
 
-all: .depend bytes
+all: .depend $(TARGET)
 
-bytes: $(TARGET)
+# bytes: $(TARGET)
 
 opt: $(TARGETOPT)
 
@@ -27,7 +27,10 @@ $(TARGET): $(NORM_OBJS)
 $(TARGETOPT) : $(OPT_OBJS)
 	$(COMPILEOPT) -o $@ $(LIBS:.cma=.cmxa) $(OPT_OBJS)
 
-.SUFFIXES: .ml .cmo .cmx .mli .cmi
+.SUFFIXES: .ml .mli .cmo .cmi .cmx
+
+.mli.cmi :
+	$(COMPILE) -c $<
 
 .ml.cmo :
 	$(COMPILE) -c $<
@@ -35,8 +38,6 @@ $(TARGETOPT) : $(OPT_OBJS)
 .ml.cmx :
 	$(COMPILEOPT) -c $<
 
-.mli.cmi :
-	$(COMPILE) -c $<
 
 
 .PHONY : clean

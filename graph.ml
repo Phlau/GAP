@@ -37,8 +37,8 @@ let trace_avion = fun x_ratio y_ratio id_gate nb_gates avion ->
   let y_start_avion = gates_to_start id_gate nb_gates y_ratio in
   if not (Graphics.point_color x_start_avion y_start_avion = Graphics.white) then Graphics.set_color Graphics.red;
   Graphics.fill_rect x_start_avion y_start_avion (int_of_float x_size_avion) (y_ratio-2); (* Creation d'une marge verticale *)
-  (* Graphics.set_color Graphics.black;
-  Graphics.draw_rect x_start_avion y_start_avion (int_of_float x_size_avion) (y_ratio-2); *)
+  Graphics.set_color Graphics.black;
+  Graphics.draw_rect x_start_avion y_start_avion (int_of_float x_size_avion) (y_ratio-2);
   let x_id = (x_start_avion * 2 + int_of_float x_size_avion)/2 in
   let y_id = (y_start_avion + gates_to_start (id_gate-1) nb_gates y_ratio)/2 in
   Graphics.moveto (x_id-3) (y_id-5);
@@ -75,7 +75,7 @@ let trace = fun solution avions nb_gates ->
   done;
   for i = 0 to n-1 do  (* On boucle sur les plane_to_gate *)
     let id_gate = solution.Classes.plane_to_gate.(i) in
-    Graphics.set_color Graphics.cyan;
+    Graphics.set_color Graphics.green;
     (* Graphics.set_color a_color.(i mod 5); (* Garder la couleur noire pour l'ecriture *) *)
     trace_avion x_ratio (int_of_float y_ratio) id_gate (int_of_float nb_gates) avions.(i);
   done;
