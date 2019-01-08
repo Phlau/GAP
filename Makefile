@@ -28,7 +28,7 @@ $(TARGET): $(NORM_OBJS)
 	$(COMPILE) -o $@ $(LIBS) $(NORM_OBJS)
 
 $(TARGETOPT) : $(OPT_OBJS)
-	$(COMPILEOPT) -p -o $@ $(LIBS:.cma=.cmxa) $(OPT_OBJS)
+	$(COMPILEOPT) -o $@ $(LIBS:.cma=.cmxa) $(OPT_OBJS)
 
 .SUFFIXES: .ml .mli .cmo .cmi .cmx
 
@@ -42,15 +42,13 @@ $(TARGETOPT) : $(OPT_OBJS)
 	$(COMPILEOPT) -c $<
 
 
+
 .PHONY : clean
 
-cleandoc:
-	\rm -Rf doc
-
 clean :
-	\rm -f *.cmo *.cmi *.cmx *.o
+	rm -f *.cmo *.cmi *.cmx *.o
 
 .depend:
-	$(CSLDEP) *.mli *.ml > .depend
+	$(CSLDEP) *.mli *.ml >.depend
 
 include .depend

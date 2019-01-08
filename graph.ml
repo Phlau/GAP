@@ -44,7 +44,7 @@ let trace_avion = fun x_ratio y_ratio id_gate nb_gates avion ->
   Graphics.moveto (x_id-3) (y_id-5);
   Graphics.set_color Graphics.black;
   Graphics.set_text_size 12;
-  Graphics.draw_string (string_of_int avion.id_avion);;
+  Graphics.draw_string (string_of_int avion.Classes.id_avion);;
 
 
 let trace_axe_gate = fun y_ratio id_gate nb_gates ->

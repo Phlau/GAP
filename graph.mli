@@ -4,10 +4,10 @@ val a_color : Graphics.color array
 (** [a_color] regroup in an array all the non special colors ([red] is for errors, and [black] for standard plotting)*)
 (*
 val x_size_tot : float
-(** The x size of the window*)
+(* The x size of the window*)
 
 val y_size_tot : float
-(** The y size of the window*) *)
+(* The y size of the window*) *)
     (*
 val time_to_size : float -> float -> float -> float
 
