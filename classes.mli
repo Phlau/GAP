@@ -13,9 +13,7 @@ and gate = {
   mutable conflits : int;
 }
 
-type changement =
-    Deplacement of int array
-  | Switch_2 of changement array
+type changement = int array array
 
 type solution = { plane_to_gate : int array; gates : gate array; }
 

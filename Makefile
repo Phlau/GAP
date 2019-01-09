@@ -17,7 +17,7 @@ NORM_OBJS = $(NORM_FILES:.ml=.cmo)
 OPT_OBJS = $(NORM_FILES:.ml=.cmx)
 LIBS = graphics.cma str.cma unix.cma
 
-all: .depend $(TARGET)
+all: .depend $(TARGET) doc
 
 doc:
 	mkdir doc;$(CAMLDOC) -html -t "GAP" -d doc -intro Intro -hide Pervasives *.mli
@@ -47,6 +47,9 @@ $(TARGETOPT) : $(OPT_OBJS)
 
 clean :
 	rm -f *.cmo *.cmi *.cmx *.o
+
+cleandoc:
+	rm -rf doc/
 
 .depend:
 	$(CSLDEP) *.mli *.ml >.depend

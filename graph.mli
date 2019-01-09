@@ -24,6 +24,8 @@ val trace_avion : float -> int -> int -> int -> Classes.avion -> unit
 val trace_axe_gate : int -> int -> int -> unit
 
 val trace_axe_temps : float -> int -> int -> unit
+
+val interactive : unit -> unit
     *)
 val trace : Classes.solution -> Classes.avion array -> float -> unit -> unit
 (**[trace solution avions nb_gates] display the current [solution] (which have the data [avions] array and the number of gates [nb_gates]) *)

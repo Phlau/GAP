@@ -10,9 +10,9 @@ let init_gate=fun nbr_gate ->
 
 
 (*Random.init (int_of_float (Unix.time()));;*)
-Random.init 15;;
 
-(*Renvoie une solution aléatoire*)
+
+(*Renvoie une solution alï¿½atoire*)
 let init_solution = fun planes_tab gates_tab ->
   let nbr_avions = Array.length planes_tab in
   let plane_to_gate =ref [] in
@@ -32,7 +32,7 @@ let init_solution = fun planes_tab gates_tab ->
   done;
   solution;;
 
-(*ajoute le changement lié a la solution suivante au tabu et enleve des elements a la liste si sa taille maximale est atteinte*)
+(*ajoute le changement liï¿½ a la solution suivante au tabu et enleve des elements a la liste si sa taille maximale est atteinte*)
 let update_tabu = fun suivant t t_size ->
   let changement = (snd  suivant) in
   t := List.append !t [changement];
@@ -43,15 +43,7 @@ let update_tabu = fun suivant t t_size ->
 
 (*Supprime les solutions du voisinage interdites par la liste tabu*)
 let eliminer_tabu = fun scourant_voisinage t ->
- (* let bons_voisins_list = ref [] in
-  for i=0 to (Array.length scourant_voisinage)-1 do
-    let (solution, changement) = scourant_voisinage.(i) in
-    if not (List.mem (changement : int array array) !t) then
-      bons_voisins_list :=  (solution,changement) ::  !bons_voisins_list;
-  done;
-  let scourant_candidate_voisins = Array.of_list !bons_voisins_list in
-  scourant_candidate_voisins;;*)
-Array.of_list (List.filter (fun x -> not (List.mem (snd x) !t)  )  (Array.to_list scourant_voisinage) );;
+  Array.of_list (List.filter (fun x -> not (List.mem (snd x) !t)  )  (Array.to_list scourant_voisinage) );;
 
 
 
@@ -62,20 +54,19 @@ let main_tabu = fun t_size p_tab g_tab max_bad_iter max_iter fact_delta fact_con
   let s_best = ref (Copie.copy_solution !s_courant) in
   let f_best = ref !f_courant in
   let t = ref [] in (*initialisation de la liste tabu*)
-  let nbr_bad_iter = ref 0 in        
+  let nbr_bad_iter = ref 0 in
   let iter=ref 0 in
-  while !nbr_bad_iter <= max_bad_iter && !iter < max_iter do     (* nbr_bad_iter = nbr d'itératins qui n'augmentent pas la fonction objectif *)
+  while !nbr_bad_iter <= max_bad_iter && !iter < max_iter do     (* nbr_bad_iter = nbr d'itï¿½ratins qui n'augmentent pas la fonction objectif *)
     iter:=!iter+1;
     let scourant_voisinage = ref (Neighbours.voisinage  !s_courant p_tab !iter) in (*calcul du voisinage*)
 
-    (* voisinage = liste de (solution, changement) où changement  = array d'array de int, soit un switch soit un déplacement*)
+    (* voisinage = liste de (solution, changement) oï¿½ changement  = array d'array de int, soit un switch soit un dï¿½placement*)
+    let scourant_candidate_voisins = ref (eliminer_tabu !scourant_voisinage t) in (*supprime les voisins interdits*)
+    let scourant_candidate_maj= ref (Neighbours.maj_delta_voisinage !scourant_candidate_voisins) in (*met a jour les deltats et conflits des voisins*)
 
-    let scourant_voisinage_maj= ref (Neighbours.maj_delta_voisinage !scourant_voisinage) in (*met a jour les deltats et conflits des voisins*)
-(*a inverser peut etre*)
-    let scourant_candidate_voisins = ref (eliminer_tabu !scourant_voisinage_maj t) in (*supprime les voisins interdits*)
-    let best_candidate=ref (Neighbours.best_candidate !scourant_candidate_voisins fact_delta fact_conflit) in (*best_candidate = ((solution, changement),val_fonction_obj)*)
+    let best_candidate=ref (Neighbours.best_candidate !scourant_candidate_maj fact_delta fact_conflit) in (*best_candidate = ((solution, changement),val_fonction_obj)*)
     let s_suivant=ref (fst !best_candidate) in (*s_suivant = (solution, changement)*)
-    let f_suivant =ref (snd !best_candidate) in  
+    let f_suivant =ref (snd !best_candidate) in
     t := update_tabu !s_suivant t t_size;
     incr nbr_bad_iter;
 
@@ -88,17 +79,8 @@ let main_tabu = fun t_size p_tab g_tab max_bad_iter max_iter fact_delta fact_con
       end;
     s_courant := fst !s_suivant;
     f_courant := !f_suivant;
-    Printf.printf " NOMBRE ITERATION =%07d NOMBRE AMELIORATION = %07d  BEST Solution =%07d\r" !iter !nbr_amelioration !f_best;
+    Printf.printf " NOMBRE ITERATION =%05d NOMBRE AMELIORATION = %05d  BEST Solution =%08d\r" !iter !nbr_amelioration !f_best;
     flush stdout;(*force l'ecriture sur le terminal*)
   done;
+ print_newline ();
   (!s_best, !f_best);;
-
-
-
-
-
-    
- 
-    
-    
-      

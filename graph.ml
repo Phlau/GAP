@@ -61,7 +61,10 @@ let trace_axe_temps = fun x_ratio y_ratio nb_gates ->
     Graphics.draw_string (string_of_int h);
   done
 
-
+let rec interactive () =
+  let event = Graphics.wait_next_event [Graphics.Key_pressed] in
+  if event.Graphics.key == 'q' then exit 0
+  else print_char event.Graphics.key; print_newline (); interactive ()
 
 let trace = fun solution avions nb_gates ->
   let y_ratio = y_ratio_from_size nb_gates y_size_tot in
@@ -76,52 +79,9 @@ let trace = fun solution avions nb_gates ->
   for i = 0 to n-1 do  (* On boucle sur les plane_to_gate *)
     let id_gate = solution.Classes.plane_to_gate.(i) in
     Graphics.set_color Graphics.green;
-    (* Graphics.set_color a_color.(i mod 5); (* Garder la couleur noire pour l'ecriture *) *)
     trace_avion x_ratio (int_of_float y_ratio) id_gate (int_of_float nb_gates) avions.(i);
   done;
-  let w = Graphics.wait_next_event [Graphics.Button_up] in
-  Graphics.close_graph;;
+  interactive();;
 
 
 
-
-
-
-(* ---------------------Pour la phase de test---------------------*)
-(*
-let gate0 = Classes.init_gate 0;;
-let gate1 = Classes.init_gate 1;;
-let gate2 = Classes.init_gate 2;;
-let gate3 = Classes.init_gate 3;;
-
-let avion0 = Classes.init_avion 0 10 20 [|gate0;gate1;gate2;gate3|];;
-let avion1 = Classes.init_avion 1 10 25 [|gate0;gate1;gate2;gate3|];;
-let avion2 = Classes.init_avion 2 30 45 [|gate0;gate1;gate2;gate3|];;
-let avion3 = Classes.init_avion 3 30 40 [|gate0;gate1;gate2;gate3|];;
-
-gate0.Classes.avion_attribue<-List.append gate0.Classes.avion_attribue [avion0;avion2];;
-gate1.Classes.avion_attribue<-List.append gate1.Classes.avion_attribue [avion1;avion3];;
-gate2.Classes.avion_attribue<-List.append gate2.Classes.avion_attribue [];;
-gate3.Classes.avion_attribue<-List.append gate3.Classes.avion_attribue [];;
-
-let avions = [|avion0;avion1;avion2;avion3|];;
-let solution_actuelle={Classes.plane_to_gate=[|0;1;0;1|];
-                       Classes.gates= [|gate0;gate1;gate2;gate3|]};;
-
-trace solution_actuelle avions 4;;*)
-(* --------------------Fin de la phase de test--------------------*)
-
-
-(* ------------------Ex d'utilisation de Graphics-----------------*)
-(*
-Graphics.open_graph " 1200x700";;
-Graphics.set_color a_color.(1);;
-Graphics.fill_rect 0 0 100 300;;
-(* Graphics.moveto 50 150 *) (* Pas besoin pour fill *)
-Graphics.set_color a_color.(5);;
-Graphics.fill_rect 50 150 100 300;;
-
-Unix.sleep 5;; (* En attendant le clic *)
-
-Graphics.close_graph;;
-*)

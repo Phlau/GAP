@@ -17,8 +17,9 @@ let deplacement_gate = fun solution_actuelle avion_array->
         gates_suivant.(id_gate_suivant).Classes.avion_attribue <- avion_array.(id_avion) :: gates_suivant.(id_gate_suivant).Classes.avion_attribue; (*ajout de l'avion dans sa nouvelle porte*)
 
         gates_suivant.(id_gate_actuel).Classes.avion_attribue<- List.filter (fun x -> x!=avion_array.(id_avion) ) gates_suivant.(id_gate_actuel).Classes.avion_attribue;  (*retrait de l'avion de son ancienne porte*)
-
-        voisin :=  (fresh,[|[|id_gate_suivant;id_gate_actuel;id_avion|]|]):: !voisin; (*ajout de la nouvelle solution et des modifications au voisinage*)
+        let depl = [|id_gate_suivant;id_gate_actuel;id_avion|] in
+        let chgt : Classes.changement = [|depl|] in
+        voisin :=  (fresh,chgt):: !voisin; (*ajout de la nouvelle solution et des modifications au voisinage*)
     done;
   done;
   Array.of_list !voisin;;
@@ -52,8 +53,11 @@ let switch = fun solution_actuelle avion_array ->
           gates_next.(id_gate_avion2).Classes.avion_attribue <- avion_array.(id_avion1) :: gates_next.(id_gate_avion2).Classes.avion_attribue;
         (*ajout de l'avion 1 a la porte initiale de l'avion 2*)
           gates_next.(id_gate_avion2).Classes.avion_attribue<- List.filter (fun x -> x!=avion_array.(id_avion2) ) gates_next.(id_gate_avion2).Classes.avion_attribue;
-           (*retrait de l'avion 2 de sa porte initiale*)
-          voisin :=  (fresh,[|[|id_gate_avion2;id_gate_avion1;id_avion1|];[|id_gate_avion1;id_gate_avion2;id_avion2|]|]):: !voisin; (*ajout de la nouvelle solution et des modifications au voisinage*)
+          (*retrait de l'avion 2 de sa porte initiale*)
+          let depl1 = [|id_gate_avion2;id_gate_avion1;id_avion1|] in
+          let depl2 = [|id_gate_avion1;id_gate_avion2;id_avion2|] in
+          let chgt : Classes.changement = [|depl1;depl2|] in
+          voisin :=  (fresh,chgt):: !voisin; (*ajout de la nouvelle solution et des modifications au voisinage*)
     done;
   done;
   Array.of_list !voisin;;
@@ -72,7 +76,7 @@ let ordonner_avion_liste = fun avion_liste ->
 
 (*mise a jour des conflits et delta d'une porte*)
 let maj_delta_gate=fun gate ->
-  gate.Classes.avion_attribue <- ordonner_avion_liste gate.Classes.avion_attribue; (*si ya un probleme  c'est ptet la*)
+  gate.Classes.avion_attribue <- ordonner_avion_liste gate.Classes.avion_attribue;
   let (conflits,delta )= Delta.f_delta gate.Classes.avion_attribue in
   gate.Classes.delta <- delta;
   gate.Classes.conflits <- conflits;;
@@ -83,10 +87,10 @@ let maj_delta_voisinage = fun voisinage -> (*voisinage est un tableau de tuple (
   let length_voisin= Array.length voisinage in
   for i=0 to (length_voisin-1) do
     let (solution,changement) = voisinage.(i) in
-    let length_changement=Array.length changement in
+    let length_changement = Array.length changement in
     for k=0 to (length_changement-1) do
       for j=0 to 1 do (*changement est un tableau d'id_portes modifiées*)
-        let id_gate_modifiee=changement.(k).(j) in
+        let id_gate_modifiee = changement.(k).(j) in
         maj_delta_gate solution.Classes.gates.(id_gate_modifiee);
       done;
     done;

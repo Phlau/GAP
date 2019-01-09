@@ -1,6 +1,6 @@
 
 
-{C Durant Florian, Gourvennec Marie, Peirera Thibaud, Ropp Thierry}
+{C Durant Florian, Gourvennec Marie, Pereira Thibaud, Ropp Thierry}
 {C Ecole Nationale de l'Aviation Civile}
 
 {2 Presentation}
@@ -14,7 +14,7 @@ Compile using command :
 > make
 v}
 
-This command creates an executable file [projet.x]
+This command creates an executable file [projet.x] and the documentation
 
 Compile using command :
 {v
@@ -23,16 +23,35 @@ v}
 
 This command creates an executable file [projetopt.x] using ocamlopt
 
+
+Use this command to create the documentation :
+{v
+> make doc
+v}
+
+
+Use this command to delete the files created by the compilation :
+{v
+> make clean
+v}
+
+
+Use this command to delete the documentation :
+{v
+> make cleandoc
+v}
+
 {2 Usage }
 
-Run the program :
+Run the program using the following command line:
 {v
-> ./projet.x
+> ./projet.x Filename NbMaxBadIter
 v}
+with Filename the name of the file you want to run and NbMaxBadIter the maximum number of iteration who doesn't improve the solution
 
 Run the optimized program :
 {v
-> ./projetopt.x
+> ./projetopt.x Filename NbMaxBadIter
 v}
 
 
@@ -51,5 +70,3 @@ This documentation was produced with [ocamldoc]:
 {v
 ocamldoc -html -t "GAP" -intro Intro -d [doc_directory] -hide Pervasives *.mli
 v}
-
-{2 Copyright and license}

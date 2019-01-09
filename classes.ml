@@ -11,9 +11,7 @@ and gate = {
   mutable delta : int;
     mutable conflits : int};; (*Nombre de conflits par Gate*)
 
-type changement =
-    Deplacement of int array
-  |Switch_2 of changement array;;
+type changement = int array array;;
         (*switch=deux deplacements*)
 
 type solution = {
@@ -29,7 +27,3 @@ let init_gate = fun id_gate1 ->
 let init_avion = fun id_avion1 h_arrivee1 h_depart1 gate_candidate1 ->
   let avion = { id_avion = id_avion1; h_arrivee=h_arrivee1; h_depart = h_depart1; gate_candidate = gate_candidate1 } in
   avion;;(*on a pas accès à gate_attribuee*)
-
-
-
-
